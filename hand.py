@@ -39,3 +39,15 @@ class Hand():
         if anyAce and value <= 11: value += 10; hard = False
         self.value = [value, hard]
         return self.value
+    
+    def getActions(self) -> list:
+        actions = []
+        if not self.busted:
+            if len(self.cards) == 2:
+                actions.append('double')
+                if self.cards[0].number == self.cards[1].number:
+                    actions.append('split')
+            if not self.stood:
+                actions.append('hit')
+                actions.append('stand')
+        return actions
