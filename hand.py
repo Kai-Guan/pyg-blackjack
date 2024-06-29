@@ -1,8 +1,21 @@
 from settings import *
+from shoe import Shoe
 
 class Hand():
     def __init__(self, num:int) -> None:
         self.num = num
+        self.cards = []
+        self.value = [0, True]
+        self.bet = 0
+        self.insurance = 0
+        self.splitHand = False
+        self.doubled = False
+        self.stood = False
+        self.busted = False
+        self.blackjack = False
+        self.surrendered = False#
+        
+    def resetHand(self) -> None:
         self.cards = []
         self.value = [0, True]
         self.bet = 0
