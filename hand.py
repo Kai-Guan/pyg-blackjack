@@ -1,6 +1,8 @@
 from settings import *
 from shoe import Shoe
 
+#used in player.py
+
 class Hand():
     def __init__(self, num:int) -> None:
         self.num = num
@@ -13,7 +15,7 @@ class Hand():
         self.stood = False
         self.busted = False
         self.blackjack = False
-        self.surrendered = False#
+        self.surrendered = False
         
     def resetHand(self) -> None:
         self.cards = []

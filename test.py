@@ -1,5 +1,10 @@
 from settings import *
 from shoe import Shoe
+from dealer import Dealer
 
-mainShoe = Shoe()
-mainShoe.generateShoe()
+controller = Dealer(2)
+
+controller.newGame()
+
+for player in controller.players:
+    print(player.hand.cards)
