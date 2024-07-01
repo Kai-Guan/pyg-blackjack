@@ -11,6 +11,8 @@ class Button():
             pass
         else:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
+                print("Colliding")
+                self.rect.inflate_ip(5, 5)
                 self.state = "hover"
                 print("Hover")
             else:
@@ -20,9 +22,9 @@ class Button():
         self._checkState()
         if self.state == "inactive": colour = BUTTON_INACTIVE_COL
         elif self.state == "hover": colour = BUTTON_HOVER_COL
-        else: colour = BUTTON_ACTIVE_COL
+        elif self.state == "active": colour = BUTTON_ACTIVE_COL
         
-        pygame.draw.rect(window, colour, self.rect)
-        pygame.draw.rect(window, BLACK, self.rect, 3)
+        pygame.draw.rect(window, colour, self.rect, 0, 10)
+        pygame.draw.rect(window, BLACK, self.rect, 1, 10)
         
         #renderText(window, self.rect.center, self.functionLabel, int(self.rect.height*0.6), BLACK)

@@ -23,5 +23,5 @@ while run:
     for button in userChoiceButtons:
         button.update(WINDOW)
             
-    pygame.display.flip()
+    pygame.display.update()
     clock.tick(60)
