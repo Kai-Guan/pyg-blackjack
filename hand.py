@@ -1,5 +1,4 @@
 from settings import *
-from shoe import Shoe
 
 #used in player.py
 
@@ -33,21 +32,21 @@ class Hand():
         value = 0
         hard = True
         anyAce = False
-        for card in self.hand:
-            value += CARD_VALUES[card.number]
-            if card.number == 1: anyAce = True
+        for card in self.cards:
+            value += CARD_VALUES[card[0]]
+            if self.cards[0] == 1: anyAce = True
         if anyAce and value <= 11: value += 10; hard = False
-        self.value = [value, hard]
-        return self.value
+        return [value, hard]
     
     def getActions(self) -> list:
         actions = []
-        if not self.busted:
-            if len(self.cards) == 2:
-                actions.append('double')
-                if self.cards[0].number == self.cards[1].number:
-                    actions.append('split')
-            if not self.stood:
-                actions.append('hit')
-                actions.append('stand')
+        if self.busted:
+            raise Exception("Not yet implimented")
+        if not self.stood:
+            actions.append('hit')
+            actions.append('stand')
+        if len(self.cards) == 2:
+            actions.append('double')
+            if self.cards[0][0] == self.cards[1][0]:
+                actions.append('split')
         return actions

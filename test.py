@@ -12,3 +12,6 @@ for player in controller.players:
     print(player.hand.cards)
     for card in player.hand.cards:
         print(convertCardToName(card))
+    print(player.hand.calcValue())
+    print(player.hand.getActions())
+    print()
