@@ -1,6 +1,6 @@
 from settings import *
 from shoe import Shoe
-from dealer import Dealer
+from controller import Dealer
 from card import *
 import sys
 

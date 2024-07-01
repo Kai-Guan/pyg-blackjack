@@ -10,13 +10,19 @@ BLACK = "#100010"
 
 BUTTON_ACTIVE_COL = WHITE
 BUTTON_HOVER_COL = "#c0a5d0"
-BUTTON_INACTIVE_COL = "#90729d"
 
 CARDS_PER_ROW = 4
 
 DECKS = 2
 
 STARTING_MONEY = 1000
+
+BUTTON_ACTIONS = {
+    1:"hit",
+    2:"stand",
+    3:"double",
+    4:"split"
+}
 
 SUITS = {
     0:"Spades",
