@@ -50,3 +50,11 @@ class Hand():
             if self.cards[0][0] == self.cards[1][0]:
                 actions.append('split')
         return actions
+    
+    def update(self)->None:
+        raise NotImplementedError
+        self.value = self.calcValue()
+        if self.value[0] > 21:
+            self.busted = True
+        if len(self.cards) == 2 and self.value[0] == 21:
+            self.blackjack = True

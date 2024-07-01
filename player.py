@@ -6,4 +6,3 @@ class Player():
         self.num = num
         self.hand = Hand(num)
         self.purse = STARTING_MONEY
-    

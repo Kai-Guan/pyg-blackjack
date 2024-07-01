@@ -24,8 +24,9 @@ while run:
             
         if event.type == pygame.MOUSEBUTTONUP:
             for button in playerChoiceButtons:
-                if button.state == "hover": controller.actionNumber(button.action)
-    
+                if button.state == "hover":
+                    controller.actionNumber(button.action)
+                    controller.players[controller.currentPlayer].hand.update()
     
     
     for button in playerChoiceButtons:
