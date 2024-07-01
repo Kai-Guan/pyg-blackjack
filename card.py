@@ -21,3 +21,6 @@ def convertCardToName(card:list) -> str:
 
 #print(convertCardToName([1, 0])) # Ace of Spades
 #print(convertCardToSymbol([1, 0])) # A S
+
+def drawCard():
+    raise NotImplementedError

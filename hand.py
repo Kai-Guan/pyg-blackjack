@@ -41,7 +41,7 @@ class Hand():
     def getActions(self) -> list:
         actions = []
         if self.busted:
-            raise Exception("Not yet implimented")
+            raise NotImplementedError
         if not self.stood:
             actions.append('hit')
             actions.append('stand')
