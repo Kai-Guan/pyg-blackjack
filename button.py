@@ -1,4 +1,5 @@
 from settings import *
+from textRenderer import renderText
 
 class Button():
     def __init__(self, action) -> None:
@@ -10,7 +11,7 @@ class Button():
         if self.rect.collidepoint(pygame.mouse.get_pos()): self.state = "hover"
         else: self.state = "active"
     
-    def update(self, window, pos:list, size:list):
+    def updateDraw(self, window, pos:list, size:list):
         self.rect = pygame.Rect(pos[0]-size[0]/2, pos[1]-size[1]/2, size[0], size[1])
         self._checkState()
         if self.state == "hover": colour = BUTTON_HOVER_COL
@@ -19,4 +20,4 @@ class Button():
         pygame.draw.rect(window, colour, self.rect, 0, 10)
         pygame.draw.rect(window, BLACK, self.rect, 1, 10)
         
-        #renderText(window, self.rect.center, self.functionLabel, int(self.rect.height*0.6), BLACK)
+        renderText(window, self.rect.center, BUTTON_ACTIONS[self.action], int(self.rect.height*0.6))

@@ -1,6 +1,8 @@
 import pygame
 pygame.init()
 
+from card_images import *
+
 WIDTH, HEIGHT = 1366, 768
 
 GREEN = "#10a023"
@@ -17,6 +19,8 @@ DECKS = 2
 
 STARTING_MONEY = 1000
 
+CARD_SIZE_MULTIPLIER = 1
+
 BUTTON_ACTIONS = {
     1:"hit",
     2:"stand",
@@ -25,10 +29,10 @@ BUTTON_ACTIONS = {
 }
 
 SUITS = {
-    0:"Spades",
-    1:"Clubs",
+    0:"Clubs",
+    1:"Diamonds",
     2:"Hearts",
-    3:"Diamonds"
+    3:"Spades"
 }
 
 COUNT_VALUES = {
