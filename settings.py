@@ -3,9 +3,11 @@ pygame.init()
 
 from card_images import *
 
+PLAYERS = 4
+
 WIDTH, HEIGHT = 1366, 768
 
-GREEN = "#10a023"
+GREEN = "#339933"
 WHITE = "#f0cef0"
 RED = "#f01e28"
 BLACK = "#100010"
@@ -18,8 +20,6 @@ CARDS_PER_ROW = 4
 DECKS = 2
 
 STARTING_MONEY = 1000
-
-CARD_SIZE_MULTIPLIER = 1
 
 BUTTON_ACTIONS = {
     1:"hit",

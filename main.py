@@ -8,7 +8,7 @@ WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('blackjack')
 clock = pygame.time.Clock()
 
-controller = Dealer(2)
+controller = Dealer(PLAYERS)
 
 controller.newGame()
 
@@ -27,11 +27,11 @@ while run:
             for button in playerChoiceButtons:
                 if button.state == "hover":
                     controller.actionNumber(button.action)
-                    controller.players[controller.currentPlayer].hand.update()
+                    controller.players[controller.currentPlayerNo].hand.update()
     
     
     for button in playerChoiceButtons:
-        if BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayer].hand.getActions():
+        if BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hand.getActions():
             button.state = "inactive"
     
     activeButtons = [_ for _ in playerChoiceButtons if _.state != "inactive"]
@@ -39,7 +39,10 @@ while run:
     for i,button in enumerate(activeButtons):
         button.updateDraw(WINDOW, (((i+1)/(len(activeButtons)+1))*WIDTH, HEIGHT*0.91), (WIDTH*0.13, HEIGHT*0.06))
         
-    drawCard(WINDOW, controller.players[controller.currentPlayer].hand.cards[0], (WIDTH*0.5, HEIGHT*0.5))
+    #drawCard(WINDOW, controller.players[controller.currentPlayerNo].hand.cards[0], (WIDTH*0.5, HEIGHT*0.5))
+    #print(convertCardToName(controller.players[controller.currentPlayerNo].hand.cards[0]))
+    controller.draw(WINDOW)
+        
         
     pygame.display.update()
     clock.tick(60)
