@@ -13,32 +13,81 @@ class Dealer():
         
     def nextPlayer(self) -> None:
         if self.currentPlayerNo == len(self.players) - 1:
-            self.currentPlayerNo = 0
+            self.currentPlayerNo = -1
         else:
-            self.currentPlayerNo += 1  
+            self.currentPlayerNo += 1
         
     def newGame(self) -> None:
         self.shoe.regenerateShoe()
         for player in self.players:
-            player.hand.resetHand()
+            player.resetHands()
         for _ in range(2):
             for player in self.players:
                 self._dealCard(player)
             
-    def _dealCard(self, player:Player) -> None:
-        player.hand.cards.append(self.shoe.drawCard())
+    def _dealCard(self, player:Player, handNo = None) -> None:
+        if handNo:
+            player.hands[handNo].cards.append(self.shoe.drawCard())
+        else:
+            player.hands[0].cards.append(self.shoe.drawCard())
         
     def actionNumber(self, number:int) -> None:
-        raise NotImplementedError
+        #raise NotImplementedError
         match number:
             case 1: return self._actionHit()
             case 2: return self._actionStand()
             case 3: return self._actionDouble()
             case 4: return self._actionSplit()
+            
+    def _actionHit(self) -> None:
+        raise NotImplementedError
+        self._dealCard(self.players[self.currentPlayerNo])
+        self.players[self.currentPlayerNo].hand.update()
+        
+    def _actionStand(self) -> None:
+        #special case for split hands
+        raise NotImplementedError
+        '''if self.players[self.currentPlayerNo].hasSplit:
+            self.players[self.currentPlayerNo].hands.stood = True
+            self.nextPlayer()
+            return
+        self.players[self.currentPlayerNo].hand.stood = True
+        self.nextPlayer()'''
+        
+    def _actionDouble(self) -> None:
+        raise NotImplementedError
+        self._dealCard(self.players[self.currentPlayerNo])
+        self.players[self.currentPlayerNo].hand.doubled = True
+        self.players[self.currentPlayerNo].hand.stood = True
+        self.players[self.currentPlayerNo].hand.update()
+        self.nextPlayer()
+        
+    def _actionSplit(self) -> None:
+        raise NotImplementedError
+        self.players[self.currentPlayerNo].init_split()
+        for hand in self.players[self.currentPlayerNo].hands:
+            hand.cards.append(self.shoe.drawCard())
+            
 
-    def draw(self, WINDOW) -> None:
+    '''def _draw(self, WINDOW) -> None:
         #draw cards for every player
-        pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.44), 30)
+        if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
         for pN, player in enumerate(self.players): #playerNumber
             for cN,card in enumerate(player.hand.cards): #cardNumber
-                drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.5+cN*0.03)  ))
+                drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))'''
+                
+    #new _draw function to draw split hands aswell, but a split hand uses the same space as the original hand, e.g. 2 hands in the space of one
+    #don't draw original hands if split hands is drawn
+    def _draw(self, WINDOW) -> None:
+        for pN, player in enumerate(self.players):
+            if player.hasSplit:
+                for hN, hand in enumerate(player.hands):
+                    for cN,card in enumerate(hand.cards):
+                        drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)/(hN+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
+            else:
+                for cN,card in enumerate(player.hand.cards):
+                    drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
+        
+                
+    def update(self, WINDOW) -> None:
+        self._draw(WINDOW)

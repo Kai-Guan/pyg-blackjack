@@ -23,7 +23,8 @@ def convertCardToName(card:list) -> str:
 #print(convertCardToSymbol([1, 0])) # A S
 
 def drawCard(WINDOW, card:list, pos:list, faceDown:bool=False):
-    imgSurf = pygame.image.load(CARD_IMAGES[card[0]-1][card[1]])
+    if faceDown: imgSurf = pygame.image.load("cards\cardback.png")
+    else: imgSurf = pygame.image.load(CARD_IMAGES[card[0]-1][card[1]])
     #imgSurf = pygame.transform.scale(imgSurf, (int(imgSurf.get_width()*CARD_SIZE_MULTIPLIER), int(imgSurf.get_height()*CARD_SIZE_MULTIPLIER)))
     size = imgSurf.get_size()
     WINDOW.blit(imgSurf, (pos[0]-size[0]/2, pos[1]-size[1]/2))

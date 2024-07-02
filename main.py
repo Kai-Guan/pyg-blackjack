@@ -27,7 +27,6 @@ while run:
             for button in playerChoiceButtons:
                 if button.state == "hover":
                     controller.actionNumber(button.action)
-                    controller.players[controller.currentPlayerNo].hand.update()
     
     
     for button in playerChoiceButtons:
@@ -41,8 +40,7 @@ while run:
         
     #drawCard(WINDOW, controller.players[controller.currentPlayerNo].hand.cards[0], (WIDTH*0.5, HEIGHT*0.5))
     #print(convertCardToName(controller.players[controller.currentPlayerNo].hand.cards[0]))
-    controller.draw(WINDOW)
-        
+    controller.update(WINDOW)
         
     pygame.display.update()
     clock.tick(60)

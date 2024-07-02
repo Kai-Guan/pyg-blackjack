@@ -3,7 +3,7 @@ pygame.init()
 
 from card_images import *
 
-PLAYERS = 4
+PLAYERS = 5
 
 WIDTH, HEIGHT = 1366, 768
 

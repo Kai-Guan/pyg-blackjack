@@ -9,9 +9,9 @@ controller = Dealer(2)
 controller.newGame()
 
 for player in controller.players:
-    print(player.hand.cards)
-    for card in player.hand.cards:
+    print(player.hands[0].cards)
+    for card in player.hands[0].cards:
         print(convertCardToName(card))
-    print(player.hand.calcValue())
-    print(player.hand.getActions())
+    print(player.hands[0].calcValue())
+    print(player.hands[0].getActions())
     print()
