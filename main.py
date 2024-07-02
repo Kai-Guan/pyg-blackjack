@@ -29,9 +29,13 @@ while run:
                     controller.actionNumber(button.action)
     
     
+    #print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
+    
     for button in playerChoiceButtons:
-        if BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hand.getActions():
+        if BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
             button.state = "inactive"
+        else:
+            button.state = "active"
     
     activeButtons = [_ for _ in playerChoiceButtons if _.state != "inactive"]
     #print([BUTTON_ACTIONS[button.action] for button in activeButtons])
@@ -41,6 +45,10 @@ while run:
     #drawCard(WINDOW, controller.players[controller.currentPlayerNo].hand.cards[0], (WIDTH*0.5, HEIGHT*0.5))
     #print(convertCardToName(controller.players[controller.currentPlayerNo].hand.cards[0]))
     controller.update(WINDOW)
+    
+    print(controller.currentPlayerNo, controller.currentHandNo)
+    print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].cards)
+    print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
         
     pygame.display.update()
     clock.tick(60)

@@ -3,7 +3,7 @@ from settings import *
 #used in player.py
 
 class Hand():
-    def __init__(self, customStartHand = None) -> None:
+    def __init__(self, customStartCard = None, isSplitHand = False) -> None:
         self.cards = []
         self.value = [0, True]
         self.bet = 0
@@ -12,9 +12,9 @@ class Hand():
         self.busted = False
         self.blackjack = False
         self.stood = False
-        self.isSplitHand = False
-        if customStartHand:
-            self.cards = customStartHand
+        self.isSplitHand = isSplitHand
+        if customStartCard:
+            self.cards = [customStartCard]
             self.value = self.calcValue()
         
     def resetHand(self) -> None:

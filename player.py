@@ -8,7 +8,7 @@ class Player():
         self.purse = STARTING_MONEY
         
     def init_split(self) -> None:
-        self.hands = [Hand(self.hands.cards[0]), Hand(self.hands.cards[1])]
+        self.hands = [Hand(self.hands[0].cards[0], True), Hand(self.hands[0].cards[1], True)]
         
     def resetHands(self) -> None:
         self.hands = [Hand()]

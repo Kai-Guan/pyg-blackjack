@@ -9,13 +9,16 @@ class Dealer():
     def __init__(self, players:int) -> None:
         self.players = [Player(i) for i in range(players)]
         self.currentPlayerNo = 0
+        self.currentHandNo = 0
         self.shoe = Shoe()
         
     def nextPlayer(self) -> None:
         if self.currentPlayerNo == len(self.players) - 1:
             self.currentPlayerNo = -1
+            self.currentHandNo = 0
         else:
             self.currentPlayerNo += 1
+            self.currentHandNo = 0
         
     def newGame(self) -> None:
         self.shoe.regenerateShoe()
@@ -46,13 +49,14 @@ class Dealer():
         
     def _actionStand(self) -> None:
         #special case for split hands
-        raise NotImplementedError
-        '''if self.players[self.currentPlayerNo].hasSplit:
-            self.players[self.currentPlayerNo].hands.stood = True
-            self.nextPlayer()
-            return
-        self.players[self.currentPlayerNo].hand.stood = True
-        self.nextPlayer()'''
+        if len(self.players[self.currentPlayerNo].hands) > 1:
+            if self.currentHandNo != len(self.players[self.currentPlayerNo].hands)-1:
+                self.players[self.currentPlayerNo].hands[self.currentHandNo].stood = True    
+             
+                self.currentHandNo += 1
+                return
+        self.players[self.currentPlayerNo].hands[0].stood = True
+        self.nextPlayer()
         
     def _actionDouble(self) -> None:
         raise NotImplementedError
@@ -63,10 +67,10 @@ class Dealer():
         self.nextPlayer()
         
     def _actionSplit(self) -> None:
-        raise NotImplementedError
         self.players[self.currentPlayerNo].init_split()
         for hand in self.players[self.currentPlayerNo].hands:
             hand.cards.append(self.shoe.drawCard())
+
             
 
     '''def _draw(self, WINDOW) -> None:
@@ -79,14 +83,14 @@ class Dealer():
     #new _draw function to draw split hands aswell, but a split hand uses the same space as the original hand, e.g. 2 hands in the space of one
     #don't draw original hands if split hands is drawn
     def _draw(self, WINDOW) -> None:
+        #draw a red dot on the current hand if the current hand is not -1
+        if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
         for pN, player in enumerate(self.players):
-            if player.hasSplit:
-                for hN, hand in enumerate(player.hands):
-                    for cN,card in enumerate(hand.cards):
-                        drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)/(hN+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
-            else:
-                for cN,card in enumerate(player.hand.cards):
-                    drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
+            for hN, hand in enumerate(player.hands):
+                for cN,card in enumerate(hand.cards):
+                    #drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
+                    #belove is above line modified so that split hands are drawn aswell, in the same space as the original hand
+                    drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03 + hN*0.03)  ))
         
                 
     def update(self, WINDOW) -> None:
