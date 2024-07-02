@@ -45,10 +45,6 @@ while run:
     #drawCard(WINDOW, controller.players[controller.currentPlayerNo].hand.cards[0], (WIDTH*0.5, HEIGHT*0.5))
     #print(convertCardToName(controller.players[controller.currentPlayerNo].hand.cards[0]))
     controller.update(WINDOW)
-    
-    print(controller.currentPlayerNo, controller.currentHandNo)
-    print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].cards)
-    print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
-        
+
     pygame.display.update()
     clock.tick(60)

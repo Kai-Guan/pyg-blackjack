@@ -71,26 +71,20 @@ class Dealer():
         for hand in self.players[self.currentPlayerNo].hands:
             hand.cards.append(self.shoe.drawCard())
 
-            
 
-    '''def _draw(self, WINDOW) -> None:
-        #draw cards for every player
-        if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
-        for pN, player in enumerate(self.players): #playerNumber
-            for cN,card in enumerate(player.hand.cards): #cardNumber
-                drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))'''
-                
-    #new _draw function to draw split hands aswell, but a split hand uses the same space as the original hand, e.g. 2 hands in the space of one
-    #don't draw original hands if split hands is drawn
     def _draw(self, WINDOW) -> None:
         #draw a red dot on the current hand if the current hand is not -1
         if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
         for pN, player in enumerate(self.players):
             for hN, hand in enumerate(player.hands):
                 for cN,card in enumerate(hand.cards):
-                    #drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03)  ))
-                    #belove is above line modified so that split hands are drawn aswell, in the same space as the original hand
-                    drawCard(WINDOW, card, ( (WIDTH- ( ((pN+1)/(len(self.players)+1)) *WIDTH)+ (cN*0.01*WIDTH)),  HEIGHT*(0.4+cN*0.03 + hN*0.03)  ))
+                    drawCard(WINDOW,
+                            card,
+                            (
+                            WIDTH- (((pN+1)/(len(self.players)+1))     *WIDTH),
+                            HEIGHT*(0.4+cN*0.03)
+                            )
+                            )
         
                 
     def update(self, WINDOW) -> None:
