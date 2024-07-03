@@ -22,6 +22,7 @@ class Dealer():
         
     def newGame(self) -> None:
         self.shoe.regenerateShoe()
+        self.shoe.customShoe(CUSTOM_SHOE)
         for player in self.players:
             player.resetHands()
         for _ in range(2):
@@ -67,23 +68,11 @@ class Dealer():
         self.nextPlayer()
         
     def _actionSplit(self) -> None:
-        self.players[self.currentPlayerNo].init_split()
-        for hand in self.players[self.currentPlayerNo].hands:
-            hand.cards.append(self.shoe.drawCard())
+        self.players[self.currentPlayerNo].split(self.currentHandNo)
+        self.players[self.currentPlayerNo].hands[self.currentHandNo].cards.append(self.shoe.drawCard())
+        self.players[self.currentPlayerNo].hands[self.currentHandNo+1].cards.append(self.shoe.drawCard())
 
-
-    def _draw(self, WINDOW) -> None:
-        #if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
-        '''for pN, player in enumerate(self.players):
-            for hN, hand in enumerate(player.hands):
-                for cN,card in enumerate(hand.cards):
-                    drawCard(WINDOW,
-                            card,
-                            (
-                            WIDTH- (((pN+1)/(len(self.players)+1))     *WIDTH),
-                            HEIGHT*(0.4+cN*0.03)
-                            )
-                            )'''
+    def _drawPlayers(self, WINDOW) -> None:
         for pN in range(len(self.players)):
                 
             if len(self.players[pN].hands) == 1:  
@@ -114,7 +103,6 @@ class Dealer():
                                 )
                         )
                 
-        
-                
+     
     def update(self, WINDOW) -> None:
-        self._draw(WINDOW)
+        self._drawPlayers(WINDOW)

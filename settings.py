@@ -3,6 +3,9 @@ pygame.init()
 
 from card_images import *
 
+#custom shoe to use for testing spliting hands
+CUSTOM_SHOE = [[1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]]
+
 PLAYERS = 3
 
 WIDTH, HEIGHT = 1366, 768
