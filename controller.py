@@ -19,6 +19,13 @@ class Dealer():
         else:
             self.currentPlayerNo += 1
             self.currentHandNo = 0
+            
+    def _nextHand(self) -> None:
+        if self.currentHandNo == len(self.players[self.currentPlayerNo].hands) - 1:
+            self.currentHandNo = 0
+            self.nextPlayer()
+        else:
+            self.currentHandNo += 1
         
     def newGame(self) -> None:
         self.shoe.regenerateShoe()
@@ -29,11 +36,8 @@ class Dealer():
             for player in self.players:
                 self._dealCard(player)
             
-    def _dealCard(self, player:Player, handNo = None) -> None:
-        if handNo:
-            player.hands[handNo].cards.append(self.shoe.drawCard())
-        else:
-            player.hands[0].cards.append(self.shoe.drawCard())
+    def _dealCard(self, player:Player) -> None:
+        player.hands[self.currentHandNo].cards.append(self.shoe.drawCard())
         
     def actionNumber(self, number:int) -> None:
         #raise NotImplementedError
@@ -42,11 +46,12 @@ class Dealer():
             case 2: return self._actionStand()
             case 3: return self._actionDouble()
             case 4: return self._actionSplit()
+            case 5: return self._nextHand()
             
     def _actionHit(self) -> None:
-        raise NotImplementedError
+        #raise NotImplementedError
         self._dealCard(self.players[self.currentPlayerNo])
-        self.players[self.currentPlayerNo].hand.update()
+        self.players[self.currentPlayerNo].hands[self.currentHandNo].update()
         
     def _actionStand(self) -> None:
         #special case for split hands
@@ -74,7 +79,7 @@ class Dealer():
 
     def _drawPlayers(self, WINDOW) -> None:
         for pN in range(len(self.players)):
-                
+            
             if len(self.players[pN].hands) == 1:  
                 
                 if self.currentPlayerNo == pN:
@@ -88,7 +93,7 @@ class Dealer():
                             HEIGHT*(0.4+cN*0.03)
                             )
                     )
-                    
+
             else:
                 #draw split hands
                 for hN in range(len(self.players[pN].hands)):

@@ -40,8 +40,12 @@ class Hand():
     
     def getActions(self) -> list:
         actions = []
+        if self.calcValue()[0] == 21:
+            actions.append('next')
+            return actions
         if self.busted:
-            raise NotImplementedError
+            actions.append('next')
+            return actions
         if not self.stood:
             actions.append('hit')
             actions.append('stand')
@@ -52,9 +56,14 @@ class Hand():
         return actions
     
     def update(self)->None:
-        raise NotImplementedError
         self.value = self.calcValue()
         if self.value[0] > 21:
             self.busted = True
         if len(self.cards) == 2 and self.value[0] == 21:
             self.blackjack = True
+        if self.busted or self.stood:
+            self.stood = True
+        if self.doubled:
+            self.stood = True
+        if self.blackjack:
+            self.stood = True
