@@ -73,9 +73,8 @@ class Dealer():
 
 
     def _draw(self, WINDOW) -> None:
-        #draw a red dot on the current hand if the current hand is not -1
-        if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
-        for pN, player in enumerate(self.players):
+        #if self.currentPlayerNo != -1: pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 30)
+        '''for pN, player in enumerate(self.players):
             for hN, hand in enumerate(player.hands):
                 for cN,card in enumerate(hand.cards):
                     drawCard(WINDOW,
@@ -84,7 +83,37 @@ class Dealer():
                             WIDTH- (((pN+1)/(len(self.players)+1))     *WIDTH),
                             HEIGHT*(0.4+cN*0.03)
                             )
+                            )'''
+        for pN in range(len(self.players)):
+                
+            if len(self.players[pN].hands) == 1:  
+                
+                if self.currentPlayerNo == pN:
+                    pygame.draw.circle(WINDOW, RED, (WIDTH- ( ((self.currentPlayerNo+1)/(len(self.players)+1)) *WIDTH)-33, HEIGHT*0.335), 20)
+                     
+                for cN in range(len(self.players[pN].hands[0].cards)):
+                    drawCard(WINDOW,
+                            self.players[pN].hands[0].cards[cN],
+                            (
+                            WIDTH - (WIDTH/(len(self.players)+1))*(pN+1),
+                            HEIGHT*(0.4+cN*0.03)
                             )
+                    )
+                    
+            else:
+                #draw split hands
+                for hN in range(len(self.players[pN].hands)):
+                    if self.currentPlayerNo == pN and self.currentHandNo == hN:
+                        pygame.draw.circle(WINDOW, RED, (WIDTH - (((WIDTH/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((WIDTH/(len(self.players)+1))*(pN)))-33, HEIGHT*0.335), 20)
+                    for cN in range(len(self.players[pN].hands[hN].cards)):
+                        drawCard(WINDOW,
+                                self.players[pN].hands[hN].cards[cN],
+                                (
+                                WIDTH - (((WIDTH/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((WIDTH/(len(self.players)+1))*(pN))),
+                                HEIGHT*(0.4+cN*0.03)
+                                )
+                        )
+                
         
                 
     def update(self, WINDOW) -> None:
