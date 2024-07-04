@@ -3,6 +3,7 @@ from player import Player
 from shoe import Shoe
 from card import *
 from dealer import Dealer
+from textRenderer import renderText
 import random
 
 #controller for dealing cards, managing bets, and resolving hands
@@ -10,6 +11,7 @@ import random
 class Controller():
     def __init__(self, players:int) -> None:
         self.players = [Player(i) for i in range(players)]
+        self.players[1].purse = 0
         self.currentPlayerNo = 0
         self.currentHandNo = 0
         self.shoe = Shoe()
@@ -21,11 +23,13 @@ class Controller():
     def nextPlayer(self) -> None:
         if self.currentPlayerNo == len(self.players) - 1:
             self.currentPlayerNo = -1
-            self.currentHandNo = 0
             self.start_tick = pygame.time.get_ticks()
+        elif self.players[self.currentPlayerNo+1].purse == 0:
+            self.currentPlayerNo += 1
+            self.nextPlayer()
         else:
             self.currentPlayerNo += 1
-            self.currentHandNo = 0
+        self.currentHandNo = 0
             
     def _nextHand(self) -> None:
         if self.currentHandNo == len(self.players[self.currentPlayerNo].hands) - 1:
@@ -44,7 +48,17 @@ class Controller():
                 self._dealCard(player)
             self.dealer.cards.append(self.shoe.drawCard())
             
-            
+    def _newRound(self) -> None:
+        self.dealer.resetHand()
+        for player in self.players:
+            player.resetHands()
+        for _ in range(2):
+            for player in self.players:
+                self._dealCard(player)
+            self.dealer.cards.append(self.shoe.drawCard())
+        self.currentPlayerNo = 0
+        self.currentHandNo = 0
+
     def _dealCard(self, player:Player) -> None:
         player.hands[self.currentHandNo].cards.append(self.shoe.drawCard())
         
@@ -80,29 +94,30 @@ class Controller():
 
     def _drawPlayers(self, WINDOW, W, H) -> None:
         for pN in range(len(self.players)):
-             
-                for hN in range(len(self.players[pN].hands)):
-                    if self.currentPlayerNo == pN and self.currentHandNo == hN:
-                        pygame.draw.circle(WINDOW, RED, (W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN)))-(W*0.024), H*0.385), 20)
-                    for cN in range(len(self.players[pN].hands[hN].cards)):
-                        #check if doubled and last card
-                        if self.players[pN].hands[hN].doubled and cN == len(self.players[pN].hands[hN].cards)-1:
-                            drawCard(WINDOW,
+            if self.players[pN].purse == 0:
+                continue
+            for hN in range(len(self.players[pN].hands)):
+                if self.currentPlayerNo == pN and self.currentHandNo == hN:
+                    pygame.draw.circle(WINDOW, RED, (W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN)))-(W*0.024), H*0.385), 20)
+                for cN in range(len(self.players[pN].hands[hN].cards)):
+                    #check if doubled and last card
+                    if self.players[pN].hands[hN].doubled and cN == len(self.players[pN].hands[hN].cards)-1:
+                        drawCard(WINDOW,
+                            self.players[pN].hands[hN].cards[cN],
+                            (
+                            W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
+                            H*(0.45+cN*0.03),
+                            ),
+                            rotated=True
+                        )
+                    else:
+                        drawCard(WINDOW,
                                 self.players[pN].hands[hN].cards[cN],
                                 (
                                 W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
                                 H*(0.45+cN*0.03),
-                                ),
-                                rotated=True
-                            )
-                        else:
-                            drawCard(WINDOW,
-                                    self.players[pN].hands[hN].cards[cN],
-                                    (
-                                    W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
-                                    H*(0.45+cN*0.03),
-                                    )
-                            )
+                                )
+                        )
                             
     def _drawDealer(self, WINDOW, W, H) -> None:
         for cN in range(len(self.dealer.cards)):
@@ -117,6 +132,7 @@ class Controller():
         W, H = WINDOW.get_size()
         self._drawPlayers(WINDOW, W, H)
         self._drawDealer(WINDOW, W, H)
+        self._drawPurses(WINDOW, W, H)
         
         if self.currentPlayerNo == -1:
             if self.sleep(random.uniform(1, 2)):
@@ -127,6 +143,10 @@ class Controller():
                 elif self.dealer.getAction() == "stand":
                     print("Dealer Stands")
                     self._endGame()
+                    
+        if self.currentPlayerNo == -2:
+            if self.sleep(5):
+                self._newRound()
         
     def sleep(self, seconds:int) -> bool:
         if self.seconds >= seconds:
@@ -147,3 +167,12 @@ class Controller():
                 winners.append([player, hand])
         print([f"Player {player.num}, Hand {hID}" for player, hand in winners])
         self.currentPlayerNo = -2
+    
+    def _drawPurses(self, WINDOW, W, H):
+        borderRect = pygame.Rect(W*0.67, H*0.05, W*0.25, H*0.25)
+        pygame.draw.rect(WINDOW, YELLOW, borderRect, 2, 5)
+        
+        for pN, player in enumerate(self.players):
+            if player.purse == 0: p = "BUST"
+            else: p = f"${player.purse}"
+            renderText(WINDOW, (W*0.68, H*0.08 + pN*(H*0.05+H*0.25)/(len(self.players)+1)), f"Player {player.num+1}: {p}", int(H*0.025), colour = "#b30059", centered = False)

@@ -1,9 +1,12 @@
 from settings import *
 
-def renderText(window, center, text, fontSize, colour = BLACK, font="Hack-Regular.ttf"):
+def renderText(window, pos, text, fontSize, colour = BLACK, font="Hack-Regular.ttf", centered = True):
     textFont = pygame.font.Font(font, fontSize)
     
     text = textFont.render(text, True, colour)
     textRect = text.get_rect()
-    textRect.center = center
+    if centered:
+        textRect.center = pos
+    else:
+        textRect.topleft = pos
     window.blit(text, textRect)

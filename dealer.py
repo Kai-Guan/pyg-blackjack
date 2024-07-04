@@ -24,3 +24,6 @@ class Dealer():
         
     def hit(self) -> None:
         self.cards.append(self.shoe.drawCard())
+        
+    def resetHand(self) -> None:
+        self.cards = []
