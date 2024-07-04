@@ -13,7 +13,7 @@ controller.newGame()
 
 playerChoiceButtons = [
     Button(i+1)
-    for i in range(5)
+    for i in range(6)
     ]
 
 run = True
@@ -33,8 +33,11 @@ while run:
     #print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
     
     for button in playerChoiceButtons:
+        print(controller.dealer.cards[1][0])
         if controller.currentPlayerNo in [-1, -2]:
             button.state = "inactive"
+        elif controller.currentHandNo == 0 and CARD_VALUES[controller.dealer.cards[1][0]] in [1, 10] and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 5:
+            button.state = "active"
         elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
             button.state = "inactive"
         else:

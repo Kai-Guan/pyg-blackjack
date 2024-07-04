@@ -51,7 +51,8 @@ class Hand():
             actions.append('hit')
             actions.append('stand')
             if len(self.cards) == 2:
-                actions.append('double')
+                if self.isSplitHand == False:
+                    actions.append('double')
                 if CARD_VALUES[self.cards[0][0]] == CARD_VALUES[self.cards[1][0]]:
                     actions.append('split')
         return actions
@@ -68,3 +69,17 @@ class Hand():
             self.stood = True
         if self.blackjack:
             self.stood = True
+            
+    def getReward(self, dealerValue):
+        self.update()
+        if self.busted:
+            return -self.bet
+        if self.blackjack:
+            return round(self.bet * 1.5, 0)
+        if self.value[0] > dealerValue:
+            return self.bet
+        if dealerValue > 21:
+            return self.bet
+        if self.value[0] == dealerValue:
+            return 0
+        return -self.bet

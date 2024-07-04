@@ -7,20 +7,21 @@ from card_images import *
 #CUSTOM_SHOE = [[2, 0] for i in range(104)]
 CUSTOM_SHOE = [[1, 0], [2, 0], [3,0], [4, 0], [10, 0], [11, 0], [12, 0], [13, 0]]
 
-PLAYERS = 3
+PLAYERS = 4
 
 WIDTH, HEIGHT = 1366, 768
 
 GREEN = "#339933"
-WHITE = "#f0cef0"
+WHITE = "#F6F0F0"
 RED = "#f01e28"
 BLACK = "#100010"
 YELLOW = "#ffbb00"
+GREY = "#1B2631"
 
 BUTTON_ACTIVE_COL = WHITE
 BUTTON_HOVER_COL = "#c0a5d0"
 
-CARDS_PER_ROW = 4
+CARDS_PER_COLUMN = 4
 
 DECKS = 2
 
@@ -31,7 +32,8 @@ BUTTON_ACTIONS = {
     2:"stand",
     3:"double",
     4:"split",
-    5:"next"
+    5:"insure",
+    6:"next"
 }
 
 SUITS = {

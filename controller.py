@@ -11,7 +11,6 @@ import random
 class Controller():
     def __init__(self, players:int) -> None:
         self.players = [Player(i) for i in range(players)]
-        self.players[1].purse = 0
         self.currentPlayerNo = 0
         self.currentHandNo = 0
         self.shoe = Shoe()
@@ -19,24 +18,6 @@ class Controller():
         
         self.start_tick=pygame.time.get_ticks()
         self.seconds = self.start_tick/1000
-        
-    def nextPlayer(self) -> None:
-        if self.currentPlayerNo == len(self.players) - 1:
-            self.currentPlayerNo = -1
-            self.start_tick = pygame.time.get_ticks()
-        elif self.players[self.currentPlayerNo+1].purse == 0:
-            self.currentPlayerNo += 1
-            self.nextPlayer()
-        else:
-            self.currentPlayerNo += 1
-        self.currentHandNo = 0
-            
-    def _nextHand(self) -> None:
-        if self.currentHandNo == len(self.players[self.currentPlayerNo].hands) - 1:
-            self.currentHandNo = 0
-            self.nextPlayer()
-        else:
-            self.currentHandNo += 1
         
     def newGame(self, customShoe:bool = False) -> None:
         self.shoe.regenerateShoe()
@@ -58,6 +39,24 @@ class Controller():
             self.dealer.cards.append(self.shoe.drawCard())
         self.currentPlayerNo = 0
         self.currentHandNo = 0
+        
+    def nextPlayer(self) -> None:
+        if self.currentPlayerNo == len(self.players) - 1:
+            self.currentPlayerNo = -1
+            self.start_tick = pygame.time.get_ticks()
+        elif self.players[self.currentPlayerNo+1].purse == 0:
+            self.currentPlayerNo += 1
+            self.nextPlayer()
+        else:
+            self.currentPlayerNo += 1
+        self.currentHandNo = 0
+            
+    def _nextHand(self) -> None:
+        if self.currentHandNo == len(self.players[self.currentPlayerNo].hands) - 1:
+            self.currentHandNo = 0
+            self.nextPlayer()
+        else:
+            self.currentHandNo += 1
 
     def _dealCard(self, player:Player) -> None:
         player.hands[self.currentHandNo].cards.append(self.shoe.drawCard())
@@ -69,7 +68,11 @@ class Controller():
             case 2: return self._actionStand()
             case 3: return self._actionDouble()
             case 4: return self._actionSplit()
-            case 5: return self._nextHand()
+            case 5: return self._actionInsure()
+            case 6: return self._nextHand()
+            
+    def _actionInsure(self) -> None:
+        raise NotImplementedError
             
     def _actionHit(self) -> None:
         #raise NotImplementedError
@@ -100,33 +103,28 @@ class Controller():
                 if self.currentPlayerNo == pN and self.currentHandNo == hN:
                     pygame.draw.circle(WINDOW, RED, (W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN)))-(W*0.024), H*0.385), 20)
                 for cN in range(len(self.players[pN].hands[hN].cards)):
-                    #check if doubled and last card
-                    if self.players[pN].hands[hN].doubled and cN == len(self.players[pN].hands[hN].cards)-1:
-                        drawCard(WINDOW,
-                            self.players[pN].hands[hN].cards[cN],
-                            (
-                            W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
-                            H*(0.45+cN*0.03),
-                            ),
-                            rotated=True
-                        )
-                    else:
-                        drawCard(WINDOW,
-                                self.players[pN].hands[hN].cards[cN],
-                                (
-                                W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
-                                H*(0.45+cN*0.03),
-                                )
-                        )
+                    drawCard(WINDOW,
+                        self.players[pN].hands[hN].cards[cN],
+                        (
+                        W - (((W/(len(self.players)+1))*2)/(len(self.players[pN].hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))) + cN*0.005*W,
+                        H*(0.45+cN*0.03),
+                        ),
+                        rotated=(self.players[pN].hands[hN].doubled and cN == len(self.players[pN].hands[hN].cards)-1)
+                    )
                             
     def _drawDealer(self, WINDOW, W, H) -> None:
         for cN in range(len(self.dealer.cards)):
             if cN == 0 and (self.currentPlayerNo not in [-1, -2]):
-                drawCard(WINDOW, self.dealer.cards[cN], (W*0.5, H*0.1), faceDown=True)
+                drawCard(WINDOW, self.dealer.cards[cN], (W*0.5, H*0.15), faceDown=True)
             else:
-                drawCard(WINDOW, self.dealer.cards[cN], ((W*0.5 + cN*0.005*W), H*(0.1+cN*0.03)))
+                drawCard(WINDOW, self.dealer.cards[cN], ((W*0.5 + cN*0.005*W), H*(0.15+cN*0.03)))
                 
-     
+        if self.currentPlayerNo in [-1, -2]:
+            renderText(WINDOW, (W*0.5, H*0.04), str(self.dealer.calcValue()[0]), int(H*0.025), colour=WHITE)
+            if self.dealer.calcValue()[0] > 21:
+                renderText(WINDOW, (W*0.5, H*0.06), "BUST", int(H*0.025), colour=WHITE)
+                
+
     def update(self, WINDOW) -> None:
         self.seconds=(pygame.time.get_ticks()-self.start_tick)/1000
         W, H = WINDOW.get_size()
@@ -169,10 +167,11 @@ class Controller():
         self.currentPlayerNo = -2
     
     def _drawPurses(self, WINDOW, W, H):
-        borderRect = pygame.Rect(W*0.67, H*0.05, W*0.25, H*0.25)
-        pygame.draw.rect(WINDOW, YELLOW, borderRect, 2, 5)
+        rect = pygame.Rect(W*0.67, H*0.05, W*0.25, H*0.25)
+        pygame.draw.rect(WINDOW, GREY, rect, 0, 5)
+        pygame.draw.rect(WINDOW, YELLOW, rect, 2, 5)
         
         for pN, player in enumerate(self.players):
             if player.purse == 0: p = "BUST"
             else: p = f"${player.purse}"
-            renderText(WINDOW, (W*0.68, H*0.08 + pN*(H*0.05+H*0.25)/(len(self.players)+1)), f"Player {player.num+1}: {p}", int(H*0.025), colour = "#b30059", centered = False)
+            renderText(WINDOW, (W*0.68, H*0.07 + pN*(H*0.05+H*0.25)/(len(self.players)+1)), f"Player {player.num+1}: {p}", int(H*0.025), colour=WHITE, centered = False)
