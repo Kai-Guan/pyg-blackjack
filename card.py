@@ -22,9 +22,10 @@ def convertCardToName(card:list) -> str:
 #print(convertCardToName([1, 0])) # Ace of Clubs
 #print(convertCardToSymbol([1, 0])) # A S
 
-def drawCard(WINDOW, card:list, pos:list, faceDown:bool=False):
+def drawCard(WINDOW, card:list, pos:list, faceDown:bool=False, rotated:bool = False):
     if faceDown: imgSurf = pygame.image.load("cards\cardback.png")
     else: imgSurf = pygame.image.load(CARD_IMAGES[card[0]-1][card[1]])
+    if rotated: imgSurf = pygame.transform.rotate(imgSurf, 90)
     #imgSurf = pygame.transform.scale(imgSurf, (int(imgSurf.get_width()*CARD_SIZE_MULTIPLIER), int(imgSurf.get_height()*CARD_SIZE_MULTIPLIER)))
     size = imgSurf.get_size()
     WINDOW.blit(imgSurf, (pos[0]-size[0]/2, pos[1]-size[1]/2))

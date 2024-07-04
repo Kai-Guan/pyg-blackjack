@@ -1,14 +1,13 @@
 from settings import *
-from player import Player
 from button import Button
-from controller import Dealer
+from controller import Controller
 from card import *
 
-WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, pygame.SCALED)
 pygame.display.set_caption('blackjack')
 clock = pygame.time.Clock()
 
-controller = Dealer(PLAYERS)
+controller = Controller(PLAYERS)
 
 controller.newGame()
 
@@ -19,6 +18,7 @@ playerChoiceButtons = [
 
 run = True
 while run:
+    WIDTH, HEIGHT = pygame.display.get_surface().get_size()
     WINDOW.fill(GREEN)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -33,7 +33,7 @@ while run:
     #print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
     
     for button in playerChoiceButtons:
-        if controller.currentPlayerNo == -1:
+        if controller.currentPlayerNo in [-1, -2]:
             button.state = "inactive"
         elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
             button.state = "inactive"
@@ -49,5 +49,5 @@ while run:
     #print(convertCardToName(controller.players[controller.currentPlayerNo].hand.cards[0]))
     controller.update(WINDOW)
 
-    pygame.display.update()
+    pygame.display.flip()
     clock.tick(60)

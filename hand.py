@@ -34,13 +34,14 @@ class Hand():
         anyAce = False
         for card in self.cards:
             value += CARD_VALUES[card[0]]
-            if self.cards[0] == 1: anyAce = True
+            if card[0] == 1: anyAce = True
         if anyAce and value <= 11: value += 10; hard = False
         return [value, hard]
     
     def getActions(self) -> list:
+        self.update()
         actions = []
-        if self.calcValue()[0] == 21:
+        if self.value[0] == 21:
             actions.append('next')
             return actions
         if self.busted:
@@ -54,7 +55,7 @@ class Hand():
                 if self.cards[0][0] == self.cards[1][0]:
                     actions.append('split')
         return actions
-    
+
     def update(self)->None:
         self.value = self.calcValue()
         if self.value[0] > 21:

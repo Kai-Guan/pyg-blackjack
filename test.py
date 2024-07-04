@@ -1,10 +1,10 @@
 from settings import *
 from shoe import Shoe
-from controller import Dealer
+from controller import Controller
 from card import *
 import sys
 
-controller = Dealer(2)
+controller = Controller(2)
 
 controller.newGame()
 

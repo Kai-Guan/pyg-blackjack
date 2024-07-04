@@ -11,7 +11,7 @@ class Button():
         if self.rect.collidepoint(pygame.mouse.get_pos()): self.state = "hover"
         else: self.state = "active"
     
-    def updateDraw(self, window, pos:list, size:list):
+    def updateDraw(self, window, pos:list, size:list, rotated = False):
         self.rect = pygame.Rect(pos[0]-size[0]/2, pos[1]-size[1]/2, size[0], size[1])
         self._checkState()
         if self.state == "hover": colour = BUTTON_HOVER_COL

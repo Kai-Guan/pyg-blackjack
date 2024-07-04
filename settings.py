@@ -4,7 +4,8 @@ pygame.init()
 from card_images import *
 
 #custom shoe to use for testing spliting hands
-CUSTOM_SHOE = [[7, 0] for i in range(104)]
+#CUSTOM_SHOE = [[2, 0] for i in range(104)]
+CUSTOM_SHOE = [[1, 0], [2, 0], [3,0], [4, 0], [10, 0], [11, 0], [12, 0], [13, 0]]
 
 PLAYERS = 3
 
