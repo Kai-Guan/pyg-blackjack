@@ -52,7 +52,7 @@ class Hand():
             actions.append('stand')
             if len(self.cards) == 2:
                 actions.append('double')
-                if self.cards[0][0] == self.cards[1][0]:
+                if CARD_VALUES[self.cards[0][0]] == CARD_VALUES[self.cards[1][0]]:
                     actions.append('split')
         return actions
 
@@ -67,4 +67,4 @@ class Hand():
         if self.doubled:
             self.stood = True
         if self.blackjack:
-            self.stood = True;/
+            self.stood = True

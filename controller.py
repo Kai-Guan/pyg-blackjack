@@ -134,12 +134,16 @@ class Controller():
         
     def _endGame(self) -> None:
         winners = []
+        push = []
         for player in self.players:
             for hID, hand in enumerate(player.hands):
                 if hand.busted:
                     continue
                 if self.dealer.calcValue()[0] > hand.calcValue()[0]:
                     continue
+                if self.dealer.calcValue()[0] == hand.calcValue()[0]:
+                    push.append([player, hand])
+                    continue
                 winners.append([player, hand])
-        print([f"{player.num} hand {hID}" for player, hand in winners])
+        print([f"Player {player.num}, Hand {hID}" for player, hand in winners])
         self.currentPlayerNo = -2
