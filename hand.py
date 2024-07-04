@@ -67,4 +67,4 @@ class Hand():
         if self.doubled:
             self.stood = True
         if self.blackjack:
-            self.stood = True
+            self.stood = True;/
