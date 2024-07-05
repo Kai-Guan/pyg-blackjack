@@ -3,10 +3,10 @@ from settings import *
 #used in player.py
 
 class Hand():
-    def __init__(self, customStartCard = None, isSplitHand = False) -> None:
+    def __init__(self, customStartCard = None, isSplitHand = False, bet = 10) -> None:
         self.cards = []
         self.value = [0, True]
-        self.bet = 0
+        self.bet = bet
         self.insurance = 0
         self.doubled = False
         self.busted = False
@@ -70,16 +70,27 @@ class Hand():
         if self.blackjack:
             self.stood = True
             
-    def getReward(self, dealerValue):
+    def getReward(self, dealerValue, dealerBlackjack, insurance):
         self.update()
+        reward = 0
         if self.busted:
-            return -self.bet
+            reward -= self.bet
+            reward -= insurance
+            return reward
+        if insurance:
+            if dealerBlackjack:
+                reward += 2*insurance
+            else:
+                reward -= insurance
         if self.blackjack:
-            return round(self.bet * 1.5, 0)
-        if self.value[0] > dealerValue:
-            return self.bet
-        if dealerValue > 21:
-            return self.bet
-        if self.value[0] == dealerValue:
-            return 0
-        return -self.bet
+            if dealerBlackjack:
+                reward += self.bet
+            else:
+                reward += int(round(2.5*self.bet, 0))
+        elif dealerValue > 21:
+            reward += 2*self.bet
+        elif dealerValue < self.value[0]:
+            reward += 2*self.bet
+        elif dealerValue == self.value[0]:
+            reward += self.bet
+        return reward

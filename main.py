@@ -20,7 +20,9 @@ run = True
 while run:
     WIDTH, HEIGHT = pygame.display.get_surface().get_size()
     WINDOW.fill(GREEN)
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    controller.events = events
+    for event in events:
         if event.type == pygame.QUIT:
             run = False
             
@@ -33,10 +35,9 @@ while run:
     #print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
     
     for button in playerChoiceButtons:
-        print(controller.dealer.cards[1][0])
-        if controller.currentPlayerNo in [-1, -2]:
+        if controller.currentPlayerNo in [-1, -2, -3]:
             button.state = "inactive"
-        elif controller.currentHandNo == 0 and CARD_VALUES[controller.dealer.cards[1][0]] in [1, 10] and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 5:
+        elif controller.currentHandNo == 0 and CARD_VALUES[controller.dealer.cards[1][0]] == 1 and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 5:
             button.state = "active"
         elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
             button.state = "inactive"
