@@ -13,7 +13,7 @@ import random
 class Controller():
     def __init__(self, players:int) -> None:
         self.players = [Player(i) for i in range(players)]
-        self.players[1].purse = 0
+        self.players[1].purse = 5
         self.currentPlayerNo = -3
         self.currentHandNo = 0
         self.shoe = Shoe()
@@ -46,13 +46,15 @@ class Controller():
                 self._dealCard(player)
             self.dealer.cards.append(self.shoe.drawCard())
         self.currentPlayerNo = 0
+        if self.players[self.currentPlayerNo].purse == 0 and self.players[self.currentPlayerNo].bet == 0:
+            self.nextPlayer()
         self.currentHandNo = 0
         
     def nextPlayer(self) -> None:
         if self.currentPlayerNo == len(self.players) - 1:
             self.currentPlayerNo = -1
             self.start_tick = pygame.time.get_ticks()
-        elif self.players[self.currentPlayerNo+1].purse == 0:
+        elif self.players[self.currentPlayerNo+1].purse == 0 and self.players[self.currentPlayerNo+1].bet == 0:
             self.currentPlayerNo += 1
             self.nextPlayer()
         else:
@@ -98,7 +100,7 @@ class Controller():
         self.players[self.currentPlayerNo].hands[self.currentHandNo].update()
         self.players[self.currentPlayerNo].hands[self.currentHandNo].bet *= 2
         self._nextHand()
-        
+
     def _actionSplit(self) -> None:
         self.players[self.currentPlayerNo].split(self.currentHandNo)
         self.players[self.currentPlayerNo].hands[self.currentHandNo].cards.append(self.shoe.drawCard())
@@ -106,7 +108,7 @@ class Controller():
 
     def _drawPlayers(self, WINDOW, W, H) -> None:
         for pN, player in enumerate(self.players):
-            if player.purse == 0:
+            if player.purse == 0 and player.bet == 0:
                 continue
             for hN in range(len(player.hands)):
                 if self.currentPlayerNo == pN and self.currentHandNo == hN:
@@ -146,7 +148,7 @@ class Controller():
         pygame.draw.rect(WINDOW, YELLOW, rect, 2, 5)
         
         for pN, player in enumerate(self.players):
-            if player.purse == 0: p = "BUST"
+            if player.purse == 0 and player.bet == 0: p = "BUST"
             else: p = f"${player.purse}"
             renderText(WINDOW, (W*0.68, H*0.07 + pN*(H*0.05+H*0.25)/(len(self.players)+1)), f"Player {player.num+1}: {p}", int(H*0.025), colour=WHITE, centered = False)
             
@@ -163,7 +165,7 @@ class Controller():
             
     def _drawBets(self, WINDOW, W, H):
         for pN, player in enumerate(self.players):
-            if player.purse == 0:
+            if player.purse == 0 and player.bet == 0:
                 continue
             
             for hN, hand in enumerate(player.hands):
@@ -172,7 +174,7 @@ class Controller():
                     pass
                 renderText(WINDOW, (
                         W - (((W/(len(self.players)+1))*2)/(len(player.hands)+1)*(hN+1)+((W/(len(self.players)+1))*(pN))),
-                        H*(0.60),
+                        H*(0.60)+len(hand.cards)*0.03*H,
                         ), f"${hand.bet}", int(H*0.025), colour=WHITE)
     
     def update(self, WINDOW) -> None:
@@ -195,7 +197,7 @@ class Controller():
                     
         if self.currentPlayerNo == -2:
             if self.sleep(5):
-                self.bets = [0 for _ in self.players]
+                self.currentPlayerNo = -3
                 
         if self.currentPlayerNo == -3:
             self._drawPursesCentered(WINDOW, W, H)
@@ -232,5 +234,9 @@ class Controller():
 
     def _endGame(self) -> None:
         for player in self.players:
-            player.purse += player.getReward(self.dealer.calcValue()[0], (self.dealer.calcValue()[0] == 21 and len(self.dealer.cards) == 2))
-        self.currentPlayerNo = -3
+            reward = player.getReward(self.dealer.calcValue()[0], (self.dealer.calcValue()[0] == 21 and len(self.dealer.cards) == 2))
+            if reward > 0:
+                player.purse += reward
+            if reward < 0 and player.purse+reward <= 0:
+                player.purse = 0
+        self.currentPlayerNo = -2

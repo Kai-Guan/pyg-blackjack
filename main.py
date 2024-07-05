@@ -41,6 +41,8 @@ while run:
             button.state = "active"
         elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
             button.state = "inactive"
+        elif button.action == 4 and controller.players[controller.currentPlayerNo].purse < controller.players[controller.currentPlayerNo].bet:
+            button.state = "inactive"
         else:
             button.state = "active"
 
