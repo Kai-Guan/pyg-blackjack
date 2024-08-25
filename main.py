@@ -30,21 +30,28 @@ while run:
             for button in playerChoiceButtons:
                 if button.state == "hover":
                     controller.actionNumber(button.action)
-   
+
 
     #print(controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions())
     
     for button in playerChoiceButtons:
         if controller.currentPlayerNo in [-1, -2, -3]:
             button.state = "inactive"
-        elif controller.currentHandNo == 0 and CARD_VALUES[controller.dealer.cards[1][0]] == 1 and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 5:
-            button.state = "active"
-        elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
-            button.state = "inactive"
-        elif button.action == 4 and controller.players[controller.currentPlayerNo].purse < controller.players[controller.currentPlayerNo].bet:
-            button.state = "inactive"
         else:
-            button.state = "active"
+            if button.action == 4 and controller.players[controller.currentPlayerNo].purse < controller.players[controller.currentPlayerNo].bet:
+                #check if split is available with enough money
+                button.state = "inactive"
+            elif controller.currentHandNo == 0 and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 3 and controller.players[controller.currentPlayerNo].purse >= controller.players[controller.currentPlayerNo].bet and controller.players[controller.currentPlayerNo].hands[0].blackjack == False:
+                #check if double is available
+                button.state = "active"
+            elif controller.currentHandNo == 0 and CARD_VALUES[controller.dealer.cards[1][0]] == 1 and len(controller.players[controller.currentPlayerNo].hands[0].cards) == 2 and controller.players[controller.currentPlayerNo].hands[0].isSplitHand == False and button.action == 5:
+                #check if insurance is available
+                button.state = "active"
+            elif BUTTON_ACTIONS[button.action] not in controller.players[controller.currentPlayerNo].hands[controller.currentHandNo].getActions():
+                #check if action is available
+                button.state = "inactive"
+            else:
+                button.state = "active"
 
     activeButtons = [_ for _ in playerChoiceButtons if _.state != "inactive"]
     #print([BUTTON_ACTIONS[button.action] for button in activeButtons])

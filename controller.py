@@ -13,7 +13,6 @@ import random
 class Controller():
     def __init__(self, players:int) -> None:
         self.players = [Player(i) for i in range(players)]
-        self.players[1].purse = 5
         self.currentPlayerNo = -3
         self.currentHandNo = 0
         self.shoe = Shoe()
@@ -72,7 +71,6 @@ class Controller():
         player.hands[self.currentHandNo].cards.append(self.shoe.drawCard())
         
     def actionNumber(self, number:int) -> None:
-        #raise NotImplementedError
         match number:
             case 1: return self._actionHit()
             case 2: return self._actionStand()
@@ -98,6 +96,7 @@ class Controller():
         self._actionHit()
         self.players[self.currentPlayerNo].hands[self.currentHandNo].doubled = True
         self.players[self.currentPlayerNo].hands[self.currentHandNo].update()
+        self.players[self.currentPlayerNo].purse -= self.players[self.currentPlayerNo].bet
         self.players[self.currentPlayerNo].hands[self.currentHandNo].bet *= 2
         self._nextHand()
 
@@ -129,7 +128,7 @@ class Controller():
                     H*(0.35)
                     ),
                     f"{"H" if player.hands[hN].calcValue()[1] else "S"}{player.hands[hN].calcValue()[0]}", int(H*0.025), colour=WHITE)
-                            
+    
     def _drawDealer(self, WINDOW, W, H) -> None:
         for cN in range(len(self.dealer.cards)):
             if cN == 0 and (self.currentPlayerNo not in [-1, -2]):
@@ -237,6 +236,7 @@ class Controller():
             reward = player.getReward(self.dealer.calcValue()[0], (self.dealer.calcValue()[0] == 21 and len(self.dealer.cards) == 2))
             if reward > 0:
                 player.purse += reward
-            if reward < 0 and player.purse+reward <= 0:
-                player.purse = 0
+            if reward < 0:
+                continue
+                #because the bet is already subtracted from the purse at the start of the round
         self.currentPlayerNo = -2
