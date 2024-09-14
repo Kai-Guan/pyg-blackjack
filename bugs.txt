@@ -1,2 +1,3 @@
 when player blackjack and dealer blackjack player still gets 1.5 payout instead of push
 insure does not work
+able to insure when blackjack?
